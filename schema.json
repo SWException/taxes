@@ -1,0 +1,53 @@
+{
+    "$id": "src/taxes/schema.json",
+    "tax":{
+        "type": "object",
+        "properties": {
+            "id": { "type": "string"},
+            "value": { "type": "number", "format": "float" },
+            "description": { "type": "string" }
+        }
+    },
+    "taxes": {
+        "type": "array",
+        "items": { "$ref": "#/tax" },
+        "uniqueItems": true
+    },
+    "insertTax": {
+        "allOf" : [
+            { "$ref": "#/tax" },
+            {
+                "required": ["value", "description"]
+            }
+        ]
+    },
+    "editTax": {
+        "allOf" : [
+            { "$ref": "#/tax" },
+            {
+                "required": ["id"]
+            }
+        ]
+    },
+    "responseTaxes": {
+        "allOf" : [
+            { "$ref": "../utils/schema.json#/response" },
+            {
+                "properties": {
+                    "data": { "$ref": "#/taxes" }
+                }
+            }
+        ]
+    },
+    "responseTax": {
+        "allOf" : [
+            { "$ref": "../utils/schema.json#/response" },
+            {
+                "properties": {
+                    "data": { "$ref": "#/tax" }
+                }
+            }
+        ]
+
+    }
+}
