@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: EmporioLambda BE
+  description: Queste sono le OpenAPI per il microservizio designato alla gestione delle tasse
+  version: 0.1.0
+
+servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/swexception4/OpenAPI/0.1.0/taxes
+- description: serverless offline
+  url: http://localhost:4000/dev/taxes
+
+paths:
+  /taxes:
+    $ref: "taxes.yml"
+  /taxes/{id}:
+    $ref: "taxesByID.yml"

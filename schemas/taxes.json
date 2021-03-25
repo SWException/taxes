@@ -1,9 +1,9 @@
 {
-    "$id": "src/taxes/schema.json",
+    "$id": "schemas/taxes.json",
     "tax":{
         "type": "object",
         "properties": {
-            "id": { "type": "string"},
+            "id": { "type": "string" },
             "value": { "type": "number", "format": "float" },
             "description": { "type": "string" }
         }
@@ -31,7 +31,7 @@
     },
     "responseTaxes": {
         "allOf" : [
-            { "$ref": "../utils/schema.json#/response" },
+            { "$ref": "response.json#/response" },
             {
                 "properties": {
                     "data": { "$ref": "#/taxes" }
@@ -41,7 +41,7 @@
     },
     "responseTax": {
         "allOf" : [
-            { "$ref": "../utils/schema.json#/response" },
+            { "$ref": "response.json#/response" },
             {
                 "properties": {
                     "data": { "$ref": "#/tax" }

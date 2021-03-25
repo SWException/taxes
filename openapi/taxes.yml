@@ -1,0 +1,75 @@
+get: # questo serve anche ai prodotti quando deve rispondere al carrello
+  summary: Richiesta lista aliquote IVA
+  description: Ritorna l'elenco di tutte le aliquote IVA presenti
+  tags:
+    - taxes
+  operationId: getTaxes
+  responses:
+    200:
+      description: "elenco di tutte le aliquote IVA"
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/taxes.json#/responseTaxes"
+          example:
+            {
+              status: "success",
+              data:
+                [
+                  { id: "1", value: 4, description: "IVA Beni Essenziali" },
+                  { id: "2", value: 10, description: "IVA Alimentari" },
+                  { id: "3", value: 22, description: "IVA ordinaria" },
+                  { id: "4", value: 35.50, description: "IVA inventata" },
+                ],
+            }
+    400:
+      description: "Errore o nessuna aliquota presente"
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/response.json#/response"
+          example:
+            {
+              status: "error",
+              message: "nessuna aliquota IVA presente"
+            }
+            
+post:
+  summary: Inserisci nuova aliquota IVA
+  description: Crea una nuova aliquota IVa  definendo automaticamente l'ID, viene richiesto il valore e la descrizione
+  tags:
+    - taxes
+  operationId: createTax
+  parameters:
+    - in: header
+      name: Authorization
+      description: token JWT
+      schema:
+        type: string
+      required: true
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/taxes.json#/insertTax"
+        example: { value: 100, description: "IVA da pazzi" }
+  responses:
+    200:
+      description: "Aliquota IVA Inserita"
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/response.json#/response"
+          example: { status: "success", message: "aliquota IVA inserita " }
+    400:
+      description: "Aliquota IVA non inserita"
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/response.json#/response"
+          example:
+            {
+              status: "error",
+              message: "aliquota IVA non inserita"
+            }
