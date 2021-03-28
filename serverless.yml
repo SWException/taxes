@@ -49,6 +49,13 @@ provider:
           Resource: "*"
 
 functions:
+  getTaxes:
+    handler: "src/hanlers/getTaxes.HANDLER"
+    events:
+      - http:
+          path: /taxes/
+          method: GET
+          cors: true
 
 resources:
   Resources:
