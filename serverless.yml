@@ -62,7 +62,7 @@ resources:
     CategoriesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: categories
+        TableName: taxes
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: "S"
