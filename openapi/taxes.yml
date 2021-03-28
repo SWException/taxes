@@ -36,7 +36,7 @@ get: # questo serve anche ai prodotti quando deve rispondere al carrello
             
 post:
   summary: Inserisci nuova aliquota IVA
-  description: Crea una nuova aliquota IVa  definendo automaticamente l'ID, viene richiesto il valore e la descrizione
+  description: Crea una nuova aliquota IVA  definendo automaticamente l'ID, viene richiesto il valore e la descrizione
   tags:
     - taxes
   operationId: createTax
