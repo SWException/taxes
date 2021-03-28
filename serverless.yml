@@ -50,7 +50,7 @@ provider:
 
 functions:
   getTaxes:
-    handler: "src/hanlers/getTaxes.HANDLER"
+    handler: "src/handlers/getTaxes.HANDLER"
     events:
       - http:
           path: /taxes/
