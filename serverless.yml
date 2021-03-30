@@ -66,6 +66,10 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: "S"
+          - AttributeName: value
+            AttributeType: "S"
+          - AttributeName: description
+            AttributeType: "S"
         KeySchema:
           - AttributeName: id
             KeyType: HASH
