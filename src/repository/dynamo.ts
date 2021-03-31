@@ -1,7 +1,7 @@
 import { Tax } from "src/core/tax";
-import { Persistence } from "src/ports/out/persistence"
+import { Persistence } from "src/repository/persistence"
 
-class Dynamo implements Persistence {
+export class Dynamo implements Persistence {
     private static readonly TABLE_TAXES = "taxes";
 
     getAll (): Array<Tax> {

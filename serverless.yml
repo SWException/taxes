@@ -26,7 +26,6 @@ custom:
 provider:
   name: aws
   region: eu-central-1
-  # profile: swexception
   runtime: nodejs12.x
   lambdaHashingVersion: "20201221"
   stage: ${opt:stage, 'dev'}
