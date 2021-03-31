@@ -1,6 +1,6 @@
 get:
-  summary: ritorna l'aliquota con ID
-  description: Ritorna l'aliquota richiesta con ID passato via path param
+  summary: Get the VAT tax by ID
+  description: Return info about the tax associated with the passed ID
   tags:
     - taxes
   parameters:
@@ -12,7 +12,7 @@ get:
   operationId: getTax
   responses:
     200:
-      description: "Aliquota IVA con ID"
+      description: "Tax returned"
       content:
         application/json:
           schema:
@@ -23,7 +23,7 @@ get:
               data: { id: "1", value: 4, description: "IVA Beni Essenziali" },
             }
     400:
-      description: "Aliquota IVA con ID non presente"
+      description: "Tax ID not present"
       content:
         application/json:
           schema:
@@ -35,8 +35,8 @@ get:
             }
 
 patch:
-  summary: Aggiorna il valore percentuale o la descrizione dell'aliquota
-  description: Aggiorna percentuale o descrizione aliquota IVA tramite ID
+  summary: Update tax
+  description: Update value or description of the taxes associated with the passed ID
   tags:
     - taxes
   operationId: updateTax
@@ -61,14 +61,14 @@ patch:
         example: { id: "3", value: 22.5 }
   responses:
     200:
-      description: "Aliquota IVA Aggiornata"
+      description: "Update successful"
       content:
         application/json:
           schema:
             $ref: "../schemas/response.json#/response"
           example: { status: "success", message: "Aliquota IVA aggiornata" }
     400:
-      description: "Aliquota IVA non aggiornata"
+      description: "request error"
       content:
         application/json:
           schema:
@@ -80,8 +80,8 @@ patch:
             }
 
 delete:
-  summary: Rimuove l'aliquota IVA  identificata dall'ID passato
-  description: Rimuove l'aliquota IVA identificata dall'ID passato
+  summary: Delete tax
+  description: Remove the tax associated with the passed ID
   tags:
     - taxes
   operationId: removeTax
@@ -103,14 +103,14 @@ delete:
         type: boolean
   responses:
     200:
-      description: "Aliquota IVA rimossa"
+      description: "Tax deleted"
       content:
         application/json:
           schema:
             $ref: "../schemas/response.json#/response"
           example: { status: "success", message: "Aliquota IVA rimossa" }
     400:
-      description: "Aliquota IVA non rimossa"
+      description: "request error"
       content:
         application/json:
           schema:
