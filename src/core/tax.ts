@@ -8,4 +8,16 @@ export class Tax {
         this.value = value;
         this.description = description;
     }
+
+    public getID (): string {
+        return this.id;
+    }
+
+    public getValue (): number {
+        return this.value;
+    }
+
+    public getDescription (): string {
+        return this.description;
+    }
 }
