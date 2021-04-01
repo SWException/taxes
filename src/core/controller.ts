@@ -4,18 +4,18 @@ import { DbMock } from "../repository/dbMock";
 import { Tax } from "./tax";
 import {v4 as uuidv4} from 'uuid';
 
-class Controller {
+export class Controller {
     private readonly DATABASE: Persistence;
     
     private constructor (db: Persistence) {
         this.DATABASE = db;
     }
 
-    public static createControllerWithDynamoDb (): Controller {
+    public static createController (): Controller {
         return new Controller(new Dynamo());
     }
 
-    public static createControllerWithMockDb (): Controller {
+    public static createControllerMock (): Controller {
         return new Controller(new DbMock());
     } 
 
@@ -28,8 +28,11 @@ class Controller {
         return result;
     }
 
-    public getTaxes (): string {
+    public getTaxes (): JSON {
         const TAXES: Array<Tax> = this.DATABASE.getAll();
+        if(TAXES == null)
+            return null;
+        
         const OBJ = {};
         TAXES.forEach(item => {
             OBJ[item.getID()] = 
@@ -38,7 +41,7 @@ class Controller {
                 description: item.getDescription()
             }
         });
-        return JSON.stringify(OBJ);
+        return JSON.parse(JSON.stringify(OBJ));
     }
 
     public getTax (id: string): string {
