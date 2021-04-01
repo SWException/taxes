@@ -1,53 +1,17 @@
 import { APIGatewayProxyResult } from "aws-lambda";
-import { Response } from "node-fetch";
 
-export class ApiResponse {
-    // WORK IN PROGRESS --> RADIOATTIVO
-    private readonly statusCode: number;
-    private readonly message: string;
-    private readonly data: JSON;
+export default function response (statusCode: number, 
+    message?: string,
+    data?: JSON): APIGatewayProxyResult {
 
-    private constructor (statusCode: number, message: string, data: JSON) {
-        this.statusCode = statusCode;
-        this.message = message;
-        this.data = data;
-    }
-
-    public static parse (response: Response): ApiResponse {
-        response.
-        if(response["statusCode"] == null)
-            return null;
-        else
-            return new ApiResponse(
-                response["statusCode"],
-                response["body"]["message"],
-                response["body"]["data"]
-            )
-    }
-
-    public static response (statusCode: number, message?: string, data?: JSON): JSON {
-        const BODY = {};
-        if(message)
-            BODY["message"] = message;
-        if(data)
-            BODY["data"] = data;
-        
-        return JSON.parse(JSON.stringify({
-            "statusCode": statusCode,
-            "body": BODY
-        }));
-    }
-
-    public getStatusCode (): number {
-        return this.statusCode;
-    }
+    const BODY = {};
+    if(message)
+        BODY["message"] = message;
+    if(data)
+        BODY["data"] = data;
     
-    public getMessage (): string {
-        return this.message;
+    return {
+        "statusCode": statusCode,
+        "body": JSON.stringify(BODY)
     }
-
-    public getData (): JSON {
-        return this.data;
-    }
-
 }

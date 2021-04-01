@@ -1,26 +1,28 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import fetch from 'node-fetch';
-import { ApiResponse } from "src/handlers/apiResponse";
-import { Controller } from "../core/controller"
+import response from "src/handlers/apiResponse";
+import { Model } from "../core/model"
 
 export const HANDLER: APIGatewayProxyHandler = async (event) => {
     const TOKEN = event.headers?.Authorization;
     if (TOKEN == null) {
-        return ApiResponse.response(400, "missing token");
+        return response(400, "missing token");
     }
-    
-    await fetch(`https://95kq9eggu9.execute-api.eu-central-1.amazonaws.com/dev/users/check/${TOKEN}`)
-        .then(response => {
-            const RESPONSE = ApiResponse.parse(response);
-            if(RESPONSE.getStatusCode() == 200) {
-                
-            }
-            else
-                return ApiResponse.response(400, "user not valid");
+    const VALID: boolean = await checkVendor(TOKEN);
+    if(!VALID)
+        return response(400, "token not valid");
+    const BODY = event.body;
+    const MODEL: Model = Model.createModel();
+    const RESULT: boolean = MODEL.createTax(BODY["value"], BODY["description"]);
+    return RESULT ? response(200, "tax inserted") : response(400, "request error");
+}
+
+async function checkVendor (token: string): Promise<boolean> {
+    return await fetch(process.env.SERVICES + `/dev/users/vendors/check/${token}`)
+        .then(async responseUser => {
+            return responseUser.status == 200;
         })
         .catch(error => {
-            //return API_RESPONSES._400(error, "error", "problem with users microservice");
-            return ApiResponse.response(400, "problem with users microservice", error);
+            return false;
         })
-
 }

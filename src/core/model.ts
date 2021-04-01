@@ -4,19 +4,19 @@ import { DbMock } from "../repository/dbMock";
 import { Tax } from "./tax";
 import {v4 as uuidv4} from 'uuid';
 
-export class Controller {
+export class Model {
     private readonly DATABASE: Persistence;
     
     private constructor (db: Persistence) {
         this.DATABASE = db;
     }
 
-    public static createController (): Controller {
-        return new Controller(new Dynamo());
+    public static createModel (): Model {
+        return new Model(new Dynamo());
     }
 
-    public static createControllerMock (): Controller {
-        return new Controller(new DbMock());
+    public static createModelMock (): Model {
+        return new Model(new DbMock());
     } 
 
     public createTax (value: number, description: string): boolean {
