@@ -56,6 +56,34 @@ functions:
           path: /taxes/
           method: GET
           cors: true
+  createTax:
+    handler: "src/handlers/createTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/
+          method: POST
+          cors: true
+  getTax:
+    handler: "src/handlers/getTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: GET
+          cors: true
+  updateTax:
+    handler: "src/handlers/updateTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: PATCH
+          cors: true
+  removeTax:
+    handler: "src/handlers/removeTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: DELETE
+          cors: true
 
 resources:
   Resources:
