@@ -1,28 +1,108 @@
 import { Tax } from "src/core/tax";
 import { Persistence } from "src/repository/persistence"
+import generateID from "src/repository/generateID";
+import * as AWS from "aws-sdk";
 
 export class Dynamo implements Persistence {
     private static readonly TABLE_TAXES = "taxes";
+    DOCUMENT_CLIENT = new AWS.DynamoDB.DocumentClient({ region: "eu-central-1" });
+
+
 
     getAll (): Array<Tax> {
         // TO-DO for DynamoDB Engineer
         return null;
     }
-    getItem (id: string): Tax {
-        // TO-DO for DynamoDB Engineer
-        return null;
+
+    async getItem (id: string): Promise<Tax> {
+
+        const PARAMS = {
+            Key: {
+                id: id
+            },
+            TableName: Dynamo.TABLE_TAXES,
+            IndexName: "id-index"
+        };
+
+        const DATA = await this.DOCUMENT_CLIENT.get(PARAMS).promise();
+        console.log("Data from DB: " + JSON.stringify(DATA));
+        //WIP
+        return DATA.Item;
+
+
+            
     }
-    addItem (item: Tax): boolean {
-        // TO-DO for DynamoDB Engineer
-        return false;
+    async addItem (item: Tax): Promise<boolean> {
+        
+        const PARAMS = {
+            TableName: Dynamo.TABLE_TAXES,
+            Key: {
+                id: generateID()
+            },
+            Item: item
+        };
+
+       const DATA =  this.DOCUMENT_CLIENT.put(PARAMS).promise().catch(
+            () => {return false; }
+       );
+
+       return (DATA) ? true : false;
+
     }
-    editItem (item: Tax): boolean {
-        // TO-DO for DynamoDB Engineer
-        return false;
+
+
+
+    async editItem (item: Tax): Promise<boolean> {
+    
+        const VALUES = {};
+        let expression = "SET ";
+        let first = true;
+
+        Object.keys(item).forEach(function (key) {
+            if (key != "id") {
+                const VALUE = data[key];
+                if (!first) {
+                    expression += ", "
+                } 
+                else {
+                    first = false;
+                }
+                expression += key + " = :" + key;
+                VALUES[":" + key] = VALUE;
+            }
+        });
+
+        const PARAMS = {
+            TableName: Dynamo.TABLE_TAXES,
+            Key: {
+                id: generateID()
+            },
+            UpdateExpression: expression,
+            ExpressionAttributeValues: VALUES
+        }
+        console.log(PARAMS);
+
+        const DATA = await this.DOCUMENT_CLIENT.update(PARAMS).promise().catch(
+            (err) => { return err; }
+        );
+        return DATA;
     }
-    deleteItem (id: string): boolean {
-        // TO-DO for DynamoDB Engineer
-        return false;
+
+    
+    async deleteItem (id: string): Promise<boolean> {
+    
+        const PARAMS = {
+            Key: {
+                id: id
+            },
+            TableName: Dynamo.TABLE_TAXES,
+            IndexName: "id-index"
+        };
+
+       await this.DOCUMENT_CLIENT.delete(PARAMS).promise().catch(
+            (err) => { return err; }
+        );
+        return true;;      
     }
 
 }
