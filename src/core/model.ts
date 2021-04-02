@@ -44,9 +44,9 @@ export class Model {
         return JSON.parse(JSON.stringify(OBJ));
     }
 
-    public getTax (id: string): string {
-        const TAX = this.DATABASE.getItem(id);
-        return JSON.stringify(TAX);
+    public getTax (id: string): JSON {
+        const TAX: Tax = this.DATABASE.getItem(id);
+        return JSON.parse(JSON.stringify(TAX));
     }
 
     public deleteTax (id: string): boolean {
