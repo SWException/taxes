@@ -5,7 +5,7 @@ import * as AWS from "aws-sdk";
 
 export class Dynamo implements Persistence {
     private static readonly TABLE_TAXES = "taxes";
-    DOCUMENT_CLIENT = new AWS.DynamoDB.DocumentClient({ region: "eu-central-1" });
+    private DOCUMENT_CLIENT = new AWS.DynamoDB.DocumentClient({ region: "eu-central-1" });
 
 
 
@@ -14,7 +14,7 @@ export class Dynamo implements Persistence {
         return null;
     }
 
-    async getItem (id: string): Promise<Tax> {
+      async getItem (id: string): Promise<Tax> {
 
         const PARAMS = {
             Key: {
@@ -25,9 +25,10 @@ export class Dynamo implements Persistence {
         };
 
         const DATA = await this.DOCUMENT_CLIENT.get(PARAMS).promise();
-        console.log("Data from DB: " + JSON.stringify(DATA));
-        //WIP
-        return DATA.Item;
+        
+        // DA VEDERE LA COSTRUZIONE !!!!    
+        let objTax: Tax = AWS.DynamoDB.Converter.unmarshall(DATA.Item) as Tax;
+        return objTax;
 
 
             
