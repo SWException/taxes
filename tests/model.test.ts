@@ -39,17 +39,51 @@ test('error createTax', async () => {
     expect(RES).toBe(false);
 });
 
+test('error createTax no token', async () => {
+    function test(){
+        return model.createTax(55, "descrizione", null);
+    }
+    await expect(test).rejects.toThrow(Error);
+});
+
 test('updateTax', async () => {
     let res = await model.updateTax("token", "1", null, "modifica descrizione");
     expect(res).toBe(true);
     res = await model.updateTax("token", "1", 75.75);
     expect(res).toBe(true);
+    res = await model.updateTax("token", "1", 75.75, null);
+    expect(res).toBe(true);
     res = await model.updateTax("token", "1", 75.75, "tassa folle");
+    expect(res).toBe(true);
 });
 
 test('error updateTax', async () => {
     let res = await model.updateTax("token", null);
     expect(res).toBe(false);
-    res = await model.updateTax("token", null);
+    res = await model.updateTax("token", null, null);
     expect(res).toBe(false);
+});
+
+test('error updateTax no token', async () => {
+    function test(){
+        return model.updateTax(null, "descrizione", 55);
+    }
+    await expect(test).rejects.toThrow(Error);
+});
+
+test('deleteTax', async () => {
+    let res = await model.deleteTax("1", "token");
+    expect(res).toBe(true);
+});
+
+test('error deleteTax', async () => {
+    let res = await model.deleteTax(null, "token");
+    expect(res).toBe(false);
+});
+
+test('error deleteTax no token', async () => {
+    function test(){
+        return model.deleteTax("1", null);
+    }
+    await expect(test).rejects.toThrow(Error);
 });

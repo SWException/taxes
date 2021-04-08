@@ -51,14 +51,19 @@ export default class Model {
     }
 
     public async deleteTax (id: string, token: string): Promise<boolean> {
-        if (!this.USERS.checkVendor(token)){
+        const IS_VENDOR = await this.USERS.checkVendor(token);
+        if (!IS_VENDOR){
             throw new Error("invalid token");
+        }
+        if(!id){
+            return false;
         }
         return await this.DATABASE.deleteItem(id);
     }
 
     public async updateTax (token: string, id: string, value?: number, description?: string): Promise<boolean> {
-        if (!this.USERS.checkVendor(token)){
+        const IS_VENDOR = await this.USERS.checkVendor(token);
+        if (!IS_VENDOR){
             throw new Error("invalid token");
         }
         if(value == null && description == null)
