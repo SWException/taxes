@@ -1,21 +1,28 @@
 import { Tax } from "src/core/tax";
-import { Persistence } from "src/repository/persistence"
-import generateID from "src/repository/generateID";
+import { Persistence } from "src/repository/persistence";
 import * as AWS from "aws-sdk";
 
 export class Dynamo implements Persistence {
+
     private static readonly TABLE_TAXES = "taxes";
     private DOCUMENT_CLIENT = new AWS.DynamoDB.DocumentClient({ region: "eu-central-1" });
 
+    public async getAll (): Promise<Array<Tax>> {
+        const PARAMS = {
+            TableName: Dynamo.TABLE_TAXES
+        };
 
+        const DATA = await this.DOCUMENT_CLIENT.scan(PARAMS).promise();
+        console.log("Data from DB: " + JSON.stringify(DATA));
+        const TAXES = new Array<Tax>();
+        DATA.Items.forEach(element => {
+            TAXES.push(new Tax(element.id, element.value, element.description));
+        });
 
-    getAll (): Array<Tax> {
-        // TO-DO for DynamoDB Engineer
-        return null;
-    }
+        return TAXES ;
+    } 
 
-      async getItem (id: string): Promise<Tax> {
-
+    public async getItem (id: string): Promise<Tax> {
         const PARAMS = {
             Key: {
                 id: id
@@ -25,20 +32,14 @@ export class Dynamo implements Persistence {
         };
 
         const DATA = await this.DOCUMENT_CLIENT.get(PARAMS).promise();
-        
-        // DA VEDERE LA COSTRUZIONE !!!!    
-        let objTax: Tax = AWS.DynamoDB.Converter.unmarshall(DATA.Item) as Tax;
-        return objTax;
-
-
-            
+        return DATA.Item? new Tax(DATA.Item.id, DATA.Item.value, DATA.Item.description) : null;
     }
-    async addItem (item: Tax): Promise<boolean> {
-        
+
+    public async addItem (item: Tax): Promise<boolean> {
         const PARAMS = {
             TableName: Dynamo.TABLE_TAXES,
             Key: {
-                id: generateID()
+                id: item.getID()
             },
             Item: item
         };
@@ -51,17 +52,14 @@ export class Dynamo implements Persistence {
 
     }
 
-
-
-    async editItem (item: Tax): Promise<boolean> {
-    
+    public async editItem (item: Tax): Promise<boolean> {
         const VALUES = {};
         let expression = "SET ";
         let first = true;
 
         Object.keys(item).forEach(function (key) {
             if (key != "id") {
-                const VALUE = data[key];
+                const VALUE = item[key];
                 if (!first) {
                     expression += ", "
                 } 
@@ -76,7 +74,7 @@ export class Dynamo implements Persistence {
         const PARAMS = {
             TableName: Dynamo.TABLE_TAXES,
             Key: {
-                id: generateID()
+                id: item.getID()
             },
             UpdateExpression: expression,
             ExpressionAttributeValues: VALUES
@@ -89,9 +87,7 @@ export class Dynamo implements Persistence {
         return DATA;
     }
 
-    
-    async deleteItem (id: string): Promise<boolean> {
-    
+    public async deleteItem (id: string): Promise<boolean> {
         const PARAMS = {
             Key: {
                 id: id
@@ -105,5 +101,4 @@ export class Dynamo implements Persistence {
         );
         return true;;      
     }
-
 }

@@ -6,20 +6,20 @@ export class DbMock implements Persistence {
     private static readonly TAX2 = new Tax("2", 10, "food & beverage");
     private static readonly TAX3 = new Tax("3", 4, "primary necessity");
 
-    getAll (): Array<Tax> {
+    public async getAll (): Promise<Array<Tax>> {
         return [DbMock.TAX1, DbMock.TAX2, DbMock.TAX3];
     }
-    getItem (id: string): Tax {
-        return DbMock.TAX1;
+    public async getItem (id: string): Promise<Tax> {
+        return id ? DbMock.TAX1 : null;
     }
-    addItem (item: Tax): boolean {
-        return true;
+    public async addItem (item: Tax): Promise<boolean> {
+        return item ? true : null;
     }
-    editItem (item: Tax): boolean {
-        return true;
+    public async editItem (item: Tax): Promise<boolean> {
+        return item ? true: null;
     }
-    deleteItem (id: string): boolean {
-        return true;
+    public async deleteItem (id: string): Promise<boolean> {
+        return id ? true : null;
     }
 
 }

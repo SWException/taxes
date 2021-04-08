@@ -2,63 +2,70 @@ import { Persistence } from "../repository/persistence"
 import { Dynamo } from "../repository/dynamo"
 import { DbMock } from "../repository/dbMock";
 import { Tax } from "./tax";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import { Users } from "src/repository/users";
+import { UsersService } from "src/repository/usersService";
+import { UsersMock } from "src/repository/usersMock";
 
-export class Model {
+export default class Model {
     private readonly DATABASE: Persistence;
+    private readonly USERS: Users;
     
-    private constructor (db: Persistence) {
+    private constructor (db: Persistence, users: Users) {
         this.DATABASE = db;
+        this.USERS = users;
     }
 
     public static createModel (): Model {
-        return new Model(new Dynamo());
+        return new Model(new Dynamo(), new UsersService());
     }
 
     public static createModelMock (): Model {
-        return new Model(new DbMock());
-    } 
+        return new Model(new DbMock(), new UsersMock());
+    }
 
-    public createTax (value: number, description: string): boolean {
-        let result = false;
+    public async createTax (value: number, description: string, token: string): Promise<boolean> {
+        const IS_VENDOR = await this.USERS.checkVendor(token);
+        if (!IS_VENDOR){
+            throw new Error("invalid token");
+        }
+        let result: boolean = false;
         if(value > 0 && description.length > 0) {
             const TAX = new Tax(uuidv4(), value, description);
-            result = this.DATABASE.addItem(TAX);
+            result = await this.DATABASE.addItem(TAX);
         }
         return result;
     }
 
-    public getTaxes (): JSON {
-        const TAXES: Array<Tax> = this.DATABASE.getAll();
+    public async getTaxes (): Promise<JSON> {
+        const TAXES: Array<Tax> = await this.DATABASE.getAll();
         if(TAXES == null)
             return null;
         
-        const OBJ = {};
-        TAXES.forEach(item => {
-            OBJ[item.getID()] = 
-            {
-                value: item.getValue(),
-                description: item.getDescription()
-            }
-        });
-        return JSON.parse(JSON.stringify(OBJ));
+        return JSON.parse(JSON.stringify(TAXES));
     }
 
-    public getTax (id: string): JSON {
-        const TAX: Tax = this.DATABASE.getItem(id);
-        return JSON.parse(JSON.stringify(TAX));
+    public async getTax (id: string): Promise<JSON> {
+        const TAX: Tax = await this.DATABASE.getItem(id);
+        return TAX ? JSON.parse(JSON.stringify(TAX)) : null;
     }
 
-    public deleteTax (id: string): boolean {
-        return this.DATABASE.deleteItem(id);
+    public async deleteTax (id: string, token: string): Promise<boolean> {
+        if (!this.USERS.checkVendor(token)){
+            throw new Error("invalid token");
+        }
+        return await this.DATABASE.deleteItem(id);
     }
 
-    public updateTax (id: string, value?: number, description?: string): boolean {
+    public async updateTax (token: string, id: string, value?: number, description?: string): Promise<boolean> {
+        if (!this.USERS.checkVendor(token)){
+            throw new Error("invalid token");
+        }
         if(value == null && description == null)
             return false;
         
         if(value == null || description == null) {
-            const ACTUAL: Tax = this.DATABASE.getItem(id);
+            const ACTUAL: Tax = await this.DATABASE.getItem(id);
             if(value == null) 
                 value = ACTUAL.getValue();
             
