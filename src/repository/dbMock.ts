@@ -13,10 +13,10 @@ export class DbMock implements Persistence {
         return id ? DbMock.TAX1 : null;
     }
     public async addItem (item: Tax): Promise<boolean> {
-        return item ? true : null;
+        return item && item.getID() && item.getValue && item.getDescription() ? true : null;
     }
     public async editItem (item: Tax): Promise<boolean> {
-        return item ? true: null;
+        return item && item.getID() && (item.getValue || item.getDescription()) ? true : null;
     }
     public async deleteItem (id: string): Promise<boolean> {
         return id ? true : null;
