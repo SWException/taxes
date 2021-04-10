@@ -7,6 +7,8 @@
 ## Develop
 [![Build Status](https://travis-ci.com/SWException/taxes.svg?branch=develop)](https://travis-ci.com/SWException/taxes)
 
+[![Tests](https://github.com/SWException/taxes/actions/workflows/node.js.yml/badge.svg)](https://github.com/SWException/taxes/actions/workflows/node.js.yml)
+
 # Info
 
 Microservice for tax management.
