@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import response from "src/handlers/apiResponse";
-import Model from "../core/model"
+import response from "src/utils/apiResponse";
+import Model from "src/core/model"
 
 export const HANDLER: APIGatewayProxyHandler = async (event) => {
     const TOKEN: string = event.headers?.Authorization;
@@ -11,8 +11,6 @@ export const HANDLER: APIGatewayProxyHandler = async (event) => {
 
     const MODEL: Model = Model.createModel();
     return await MODEL.deleteTax(TAX_ID, TOKEN)
-        .then((RESULT: boolean) => {
-            return RESULT ? response(200, "tax deleted") : response(400, "request error");
-        })
+        .then((RESULT: boolean) => RESULT ? response(200, "tax deleted") : response(400, "request error"))
         .catch((err: Error) => response(400, err.message));
 }

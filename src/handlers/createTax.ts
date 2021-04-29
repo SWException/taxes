@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import response from "src/handlers/apiResponse";
-import Model from "../core/model"
+import response from "src/utils/apiResponse";
+import Model from "src/core/model"
 
 export const HANDLER: APIGatewayProxyHandler = async (event) => {
     const TOKEN: string = event.headers?.Authorization;
@@ -17,7 +17,7 @@ export const HANDLER: APIGatewayProxyHandler = async (event) => {
     }
 
     const MODEL: Model = Model.createModel();
-    return await MODEL.createTax(BODY["value"], BODY["description"], TOKEN)
+    return await MODEL.createTax(BODY, TOKEN)
         .then((RESULT: boolean) => {
             return RESULT ? response(200, "tax inserted") : response(400, "request error");
         })

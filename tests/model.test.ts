@@ -1,7 +1,7 @@
 import Core from "src/core/model"
 import { matchersWithOptions } from 'jest-json-schema';
 import { JSONSchema7 } from "json-schema";
-import { SCHEMAS, setFormats } from 'tests/configAjv';
+import { SCHEMAS, setFormats } from 'src/utils/configAjv';
 
 expect.extend(matchersWithOptions(SCHEMAS, (ajv) => setFormats(ajv)));
 
@@ -30,45 +30,47 @@ test('getTaxes', async () => {
 });
 
 test('createTax', async () => {
-    const RES = await model.createTax(75.75, "tassa folle", "token");
+    const RES = await model.createTax({ value: 75.75, description: "tassa folle" }, "token");
     expect(RES).toBe(true);
 });
 
 test('error createTax', async () => {
-    const RES = await model.createTax(null, null, "token");
-    expect(RES).toBe(false);
+    await expect(model.createTax(null, "token"))
+        .rejects.toThrow(Error);
+    await expect(model.createTax({ description: "tassa folle" }, "token"))
+        .rejects.toThrow(Error);
 });
 
 test('error createTax no token', async () => {
-    function test(){
-        return model.createTax(55, "descrizione", null);
-    }
-    await expect(test).rejects.toThrow(Error);
+    await expect(model.createTax({ value: 55, description: "descrizione" }, null))
+        .rejects.toThrow(Error);
 });
 
 test('updateTax', async () => {
-    let res = await model.updateTax("token", "1", null, "modifica descrizione");
+    let res = await model.updateTax("1", { description: "modifica descrizione" }, "token");
     expect(res).toBe(true);
-    res = await model.updateTax("token", "1", 75.75);
+    res = await model.updateTax("1", { value: 75.75 }, "token");
     expect(res).toBe(true);
-    res = await model.updateTax("token", "1", 75.75, null);
-    expect(res).toBe(true);
-    res = await model.updateTax("token", "1", 75.75, "tassa folle");
+    res = await model.updateTax("1", { value: 75.75, description: "tassa folle" }, "token");
     expect(res).toBe(true);
 });
 
 test('error updateTax', async () => {
-    let res = await model.updateTax("token", null);
-    expect(res).toBe(false);
-    res = await model.updateTax("token", null, null);
-    expect(res).toBe(false);
+    await expect(model.updateTax(null, null, "token"))
+        .rejects.toThrow(Error);
+    await expect(model.updateTax("1", null, "token"))
+        .rejects.toThrow(Error);
+    await expect(model.updateTax(null, { value: 75.75, description: "tassa folle" }, "token"))
+        .rejects.toThrow(Error);
+    await expect(model.updateTax("1", { value: "75.75", description: "tassa folle" }, "token"))
+        .rejects.toThrow(Error);
+    await expect(model.updateTax("1", { ciao: "ciao" }, "token"))
+        .rejects.toThrow(Error);
 });
 
 test('error updateTax no token', async () => {
-    function test(){
-        return model.updateTax(null, "descrizione", 55);
-    }
-    await expect(test).rejects.toThrow(Error);
+    await expect(model.updateTax("1", { value: 75.75, description: "tassa folle" }, null))
+        .rejects.toThrow(Error);
 });
 
 test('deleteTax', async () => {
@@ -82,8 +84,6 @@ test('error deleteTax', async () => {
 });
 
 test('error deleteTax no token', async () => {
-    function test(){
-        return model.deleteTax("1", null);
-    }
-    await expect(test).rejects.toThrow(Error);
+    await expect(model.deleteTax("1", null))
+        .rejects.toThrow(Error);
 });
