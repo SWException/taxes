@@ -18,9 +18,8 @@ export const HANDLER: APIGatewayProxyHandler = async (event) => {
 
     const MODEL: Model = Model.createModel();
     return await MODEL.createTax(BODY, TOKEN)
-        .then((RESULT: boolean) => {
-            return RESULT ? response(200, "tax inserted") : response(400, "request error");
-        })
+        .then((result: boolean) => result ? response(200, "tax inserted") :
+            response(400, "request error"))
         .catch((err: Error) => response(400, err.message));
 }
 
