@@ -8,7 +8,9 @@ export const HANDLER: APIGatewayProxyHandler = async (event) => {
     if (TOKEN == null || TAX_ID == null) {
         return response(400, "missing token");
     }
-    const BODY = event.body;
+    const BODY = JSON.parse(event.body);
+    console.log(BODY);
+    
     const MODEL: Model = Model.createModel();
     return await MODEL.updateTax(TAX_ID, BODY, TOKEN)
         .then((RESULT: boolean) => RESULT ? response(200, "update successful") : response(400, "update failure"))

@@ -89,8 +89,12 @@ export default class Model {
         }
 
         const VALID = this.AJV.validate("schemas/taxes.json#/editTax", newTax);
-        if (!VALID || (newTax.value == null && newTax.description == null)) {
-            throw new Error("Tax does not match the schema of required attributes");
+        if (!VALID) {
+            throw new Error("Tax does not match the schema of Tax");
+        }
+
+        if(newTax?.value == null && newTax?.description == null) {
+            throw new Error("Tax value or description must be defined");
         }
         
         if(newTax.value == null || newTax.description == null) {

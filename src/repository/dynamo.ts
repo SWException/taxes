@@ -44,47 +44,31 @@ export class Dynamo implements Persistence {
             Item: item
         };
 
-       const DATA =  this.DOCUMENT_CLIENT.put(PARAMS).promise().catch(
-            () => {return false; }
-       );
+       const DATA =  this.DOCUMENT_CLIENT.put(PARAMS).promise();
 
        return (DATA) ? true : false;
-
     }
 
     public async editItem (item: Tax): Promise<boolean> {
-        const VALUES = {};
-        let expression = "SET ";
-        let first = true;
-
-        Object.keys(item).forEach(function (key) {
-            if (key != "id") {
-                const VALUE = item[key];
-                if (!first) {
-                    expression += ", "
-                } 
-                else {
-                    first = false;
-                }
-                expression += key + " = :" + key;
-                VALUES[":" + key] = VALUE;
-            }
-        });
-
         const PARAMS = {
             TableName: Dynamo.TABLE_TAXES,
             Key: {
                 id: item.getID()
             },
-            UpdateExpression: expression,
-            ExpressionAttributeValues: VALUES
+            UpdateExpression: "SET #value = :value, #description = :description",
+            ExpressionAttributeValues: {
+                ":value": item.getValue(),
+                ":description": item.getDescription()
+            },
+            ExpressionAttributeNames:{
+                "#value": "value",
+                "#description": "description"
+            }
         }
         console.log(PARAMS);
 
-        const DATA = await this.DOCUMENT_CLIENT.update(PARAMS).promise().catch(
-            (err) => { return err; }
-        );
-        return DATA;
+        const DATA = await this.DOCUMENT_CLIENT.update(PARAMS).promise();
+        return DATA? true : false;
     }
 
     public async deleteItem (id: string): Promise<boolean> {
@@ -96,9 +80,7 @@ export class Dynamo implements Persistence {
             IndexName: "id-index"
         };
 
-       await this.DOCUMENT_CLIENT.delete(PARAMS).promise().catch(
-            (err) => { return err; }
-        );
+       await this.DOCUMENT_CLIENT.delete(PARAMS).promise();
         return true;;      
     }
 }
