@@ -42,7 +42,7 @@ export default class Model {
             throw new Error("Tax does not match the schema of required attributes");
         }
 
-        let result: boolean = false;
+        let result = false;
         if(newTax.value > 0 && newTax.description.length > 0) {
             const TAX = new Tax(uuidv4(), newTax.value, newTax.description);
             result = await this.DATABASE.addItem(TAX);
@@ -50,17 +50,12 @@ export default class Model {
         return result;
     }
 
-    public async getTaxes (): Promise<JSON> {
-        const TAXES: Array<Tax> = await this.DATABASE.getAll();
-        if(TAXES == null)
-            return null;
-        
-        return JSON.parse(JSON.stringify(TAXES));
+    public async getTaxes (): Promise<Array<Tax>> {
+        return await this.DATABASE.getAll();
     }
 
-    public async getTax (id: string): Promise<JSON> {
-        const TAX: Tax = await this.DATABASE.getItem(id);
-        return TAX ? JSON.parse(JSON.stringify(TAX)) : null;
+    public async getTax (id: string): Promise<Tax> {
+        return await this.DATABASE.getItem(id);
     }
 
     public async deleteTax (id: string, token: string): Promise<boolean> {
@@ -74,6 +69,7 @@ export default class Model {
         return await this.DATABASE.deleteItem(id);
     }
 
+    // eslint-disable-next-line complexity
     public async updateTax (id: string, newTax: any, token: string): Promise<boolean> {
         if (!newTax) {
             throw new Error("invalid tax attributes");
