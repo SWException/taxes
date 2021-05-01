@@ -6,7 +6,7 @@ export class DbMock implements Persistence {
     private static readonly TAX2 = new Tax("2", 10, "food & beverage");
     private static readonly TAX3 = new Tax("3", 4, "primary necessity");
 
-    public async getAll (): Promise<Array<Tax>> {
+    public async getAll (_search?: string): Promise<Array<Tax>> {
         return [DbMock.TAX1, DbMock.TAX2, DbMock.TAX3];
     }
     public async getItem (id: string): Promise<Tax> {

@@ -50,8 +50,8 @@ export default class Model {
         return result;
     }
 
-    public async getTaxes (): Promise<Array<Tax>> {
-        return await this.DATABASE.getAll();
+    public async getTaxes (search?: string): Promise<Array<Tax>> {
+        return await this.DATABASE.getAll(search);
     }
 
     public async getTax (id: string): Promise<Tax> {

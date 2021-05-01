@@ -7,10 +7,20 @@ export class Dynamo implements Persistence {
     private static readonly TABLE_TAXES = "taxes";
     private DOCUMENT_CLIENT = new AWS.DynamoDB.DocumentClient({ region: "eu-central-1" });
 
-    public async getAll (): Promise<Array<Tax>> {
+    public async getAll (search?: string): Promise<Array<Tax>> {
         const PARAMS = {
             TableName: Dynamo.TABLE_TAXES
         };
+
+        if (search) {
+            PARAMS['FilterExpression'] = "contains(#description, :search)";
+            PARAMS['ExpressionAttributeValues'] = {
+                ":search": search
+            };
+            PARAMS['ExpressionAttributeNames'] = {
+                "#description": "description",
+            }
+        }
 
         const DATA = await this.DOCUMENT_CLIENT.scan(PARAMS).promise();
         console.log("Data from DB: " + JSON.stringify(DATA));
