@@ -26,7 +26,6 @@ custom:
 provider:
   name: aws
   region: eu-central-1
-  # profile: swexception
   runtime: nodejs12.x
   lambdaHashingVersion: "20201221"
   stage: ${opt:stage, 'dev'}
@@ -37,6 +36,7 @@ provider:
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+    SERVICES: ${env:SERVICES}
     REGION: ${self:provider.region}
 
   iam:
@@ -49,15 +49,54 @@ provider:
           Resource: "*"
 
 functions:
+  getTaxes:
+    handler: "src/handlers/getTaxes.HANDLER"
+    events:
+      - http:
+          path: /taxes/
+          method: GET
+          cors: true
+  createTax:
+    handler: "src/handlers/createTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/
+          method: POST
+          cors: true
+  getTax:
+    handler: "src/handlers/getTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: GET
+          cors: true
+  updateTax:
+    handler: "src/handlers/updateTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: PATCH
+          cors: true
+  removeTax:
+    handler: "src/handlers/removeTax.HANDLER"
+    events:
+      - http:
+          path: /taxes/{id}
+          method: DELETE
+          cors: true
 
 resources:
   Resources:
     CategoriesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: categories
+        TableName: taxes
         AttributeDefinitions:
           - AttributeName: id
+            AttributeType: "S"
+          - AttributeName: value
+            AttributeType: "S"
+          - AttributeName: description
             AttributeType: "S"
         KeySchema:
           - AttributeName: id

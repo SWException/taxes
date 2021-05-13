@@ -1,12 +1,12 @@
 get: # questo serve anche ai prodotti quando deve rispondere al carrello
-  summary: Richiesta lista aliquote IVA
-  description: Ritorna l'elenco di tutte le aliquote IVA presenti
+  summary: Get VAT taxes
+  description: Return the list of all taxes in the system
   tags:
     - taxes
   operationId: getTaxes
   responses:
     200:
-      description: "elenco di tutte le aliquote IVA"
+      description: "taxes list"
       content:
         application/json:
           schema:
@@ -23,7 +23,7 @@ get: # questo serve anche ai prodotti quando deve rispondere al carrello
                 ],
             }
     400:
-      description: "Errore o nessuna aliquota presente"
+      description: "request error"
       content:
         application/json:
           schema:
@@ -35,8 +35,8 @@ get: # questo serve anche ai prodotti quando deve rispondere al carrello
             }
             
 post:
-  summary: Inserisci nuova aliquota IVA
-  description: Crea una nuova aliquota IVa  definendo automaticamente l'ID, viene richiesto il valore e la descrizione
+  summary: "Create a new VAT tax"
+  description: "Create a new VAT tax passing the value in percentage and the description"
   tags:
     - taxes
   operationId: createTax
@@ -56,14 +56,14 @@ post:
         example: { value: 100, description: "IVA da pazzi" }
   responses:
     200:
-      description: "Aliquota IVA Inserita"
+      description: "Tax created"
       content:
         application/json:
           schema:
             $ref: "../schemas/response.json#/response"
           example: { status: "success", message: "aliquota IVA inserita " }
     400:
-      description: "Aliquota IVA non inserita"
+      description: "request error"
       content:
         application/json:
           schema:
